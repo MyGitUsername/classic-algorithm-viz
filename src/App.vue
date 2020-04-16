@@ -1,39 +1,69 @@
 <template>
-  <div id="app">
-    <BinarySearch title="Binary Search"/>
-  </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+      >
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-toolbar-title v-on="on">{{ selected }}</v-toolbar-title>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in content"
+            :key="index"
+            @click="selected=item.title"
+            >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-app-bar>
+
+    <v-content>
+      <BinarySearch v-if="selected === 'BinarySearch'"/>
+      <BubbleSort v-if="selected === 'BubbleSort'"/>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import BinarySearch from './components/BinarySearch.vue'
+import BinarySearch from './components/BinarySearch';
+import BubbleSort from './components/BubbleSort';
 
 export default {
   name: 'App',
+
   components: {
-    BinarySearch
-  }
-}
+    BinarySearch,
+    BubbleSort
+  },
+
+  data: () => ({
+    selected: "BubbleSort",
+    content: [
+      {
+        title: 'BinarySearch'
+      },
+      {
+        title: 'BubbleSort'
+      }
+    ],
+  }),
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
 @keyframes highlightGreen {
-  0% {fill: rgb(64, 84, 178, 1); }
-  50% { fill: green; }
-  100% { fill: rgb(64, 84, 178, 1); }
+  0% {fill: green;}
+  50% {fill: green;}
+  100% {fill: green;}
 }
 
-@keyframes highlightBlack {
-  0% {fill: rgb(64, 84, 178, 1); }
-  50% { fill: black; }
-  100% { fill: rgb(64, 84, 178, 1); }
+@keyframes highlightYellow {
+  0% {fill: yellow;}
+  50% {fill: yellow;}
+  100% {fill: yellow;}
 }
 </style>

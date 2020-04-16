@@ -1,18 +1,11 @@
 <template>
-  <div>
-    <ul>
-      <li> {{ title}} </li>
-      <li>
-        <button @click="refreshList()">Refresh</button>
-      </li>
-    </ul>
+  <v-container>
+    <v-btn @click="refreshList()">Refresh</v-btn>
     <BarChart
-      :viewWidth='width'
-      :viewHeight='height'
       :list='list'
       :animationData='barChartAnimationData'
       />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -23,46 +16,49 @@ export default {
   components: {
     BarChart
   },
+  maxNumber: 100,
   props: {
     title: String
   },
   data: function () {
     return {
-      delay: 2000,
+      delay: 3000,
       barChartAnimationData: [],
-      width: 800,
-      height: 400,
-      itemsNumber: Math.floor(Math.random() * 100) + 1
+      itemsNumber: Math.floor(Math.random() * this.$options.maxNumber) + 1
     }
   },
   computed: {
     list: function () {
-      const MAX_NUMBER = 1000;
       return Array.from(Array(this.itemsNumber), () =>
-        Math.floor(Math.random() * MAX_NUMBER)
+        Math.floor(Math.random() * this.$options.maxNumber)
       ).sort((a,b) => a - b)
     }
   },
   methods: {
     refreshList: function() {
-      this.delay = 2000;
+      console.log('refresh')
+      this.delay = 3000;
       this.barChartAnimationData =  [];
-      this.itemsNumber = Math.floor(Math.random() * 100) + 1;
+      do {
+        var newItemsNumber = Math.floor(Math.random() * this.$options.maxNumber) + 1;
+      } while (this.itemsNumber == newItemsNumber)
+      this.itemsNumber = newItemsNumber; // triggers the list to recompute
       let rndIdx = Math.floor(Math.random() * this.itemsNumber);
       this.binarySearch(this.list, this.list[rndIdx], 0, this.itemsNumber - 1);
     },
 
     binarySearch: function (array, val, start, end) {
+      console.log('in binary search start ' + start + ', end: ' + end)
       let mid  = Math.floor((start + end) / 2)
-      //console.log('searching for ' + val + ' in ' + array + " end " + end)
 
       if (val != array[mid]) {
         this.barChartAnimationData.push(
-          {idx: mid, color: 'green', delay: this.delay},
-          {idx: start, color: 'black', delay: this.delay},
-          {idx: end, color: 'black', delay: this.delay})
+          {idx: start, color: 'highlightYellow', delay: this.delay},
+          {idx: end, color: 'highlightYellow', delay: this.delay},
+          {idx: mid, color: 'highlightGreen', delay: this.delay})
       } else {
-        this.barChartAnimationData.push({idx: mid, color: 'green', delay: this.delay})
+        console.log('in binary search pushing ' + mid)
+        this.barChartAnimationData.push({idx: mid, color: 'highlightGreen', delay: this.delay})
       }
       this.delay += 1000;
 
@@ -72,7 +68,6 @@ export default {
         return this.binarySearch(array, val, mid + 1, end)
       } else {
         return mid;
-        //return mid;
       }
     },
   },
@@ -82,21 +77,5 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 2128, 404.467;
-  overflow: hidden;
-}
-
-li {
-  float: left;
-  display: inline-block;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
 </style>
