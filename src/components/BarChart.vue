@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <svg :width="svgWidth" :height="svgHeight">
-      <g>
       <rect
         v-for="rect in rects"
         :key="rect.id"
@@ -16,7 +15,6 @@
         :id="rect.id"
         >
       </rect>
-      </g>
     </svg>
   </v-container>
 </template>
@@ -33,6 +31,7 @@ export default {
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
   data: function () {
     return {
+      // TODO: don't hardcode, make adjust to size of window?
       svgWidth: 800,
       svgHeight: 400,
     }
