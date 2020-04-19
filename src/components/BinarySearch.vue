@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-btn @click="refreshList()">New Data</v-btn>
-    <v-btn @click="barChartAnimationData = binarySearch(list, list[3], 0, listSize - 1)">Sort</v-btn>
-    <BubbleSortVisualization
+    <v-btn @click="barChartAnimationData = binarySearch(list, list[3], 0, listSize - 1)">Search</v-btn>
+    <BarChartVisualization
       :list='list'
       :highlightBars='barChartAnimationData'
       />
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import BubbleSortVisualization from '@/components/BubbleSortVisualization.vue';
+import BarChartVisualization from '@/components/BarChartVisualization.vue';
 
 export default {
   name: 'BinarySearch',
   components: {
-    BubbleSortVisualization
+    BarChartVisualization
   },
   maxListSize: 25,
   props: {

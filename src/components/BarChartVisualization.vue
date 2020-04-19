@@ -23,7 +23,7 @@
 import * as d3 from 'd3';
 
 export default {
-  name: 'BubbleSortVisualization',
+  name: 'BarChartVisualization',
   props: {
     list: Array,
     swapPairs: Array,

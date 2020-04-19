@@ -2,7 +2,7 @@
   <v-container>
     <v-btn @click="refreshList()">New Data</v-btn>
     <v-btn @click="swapPairs = bubbleSort(list)">Sort</v-btn>
-    <BubbleSortVisualization
+    <BarChartVisualization
       :list="list"
       :swapPairs="swapPairs"
       />
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import BubbleSortVisualization from '@/components/BubbleSortVisualization.vue';
+import BarChartVisualization from '@/components/BarChartVisualization.vue';
 
 export default {
   name: 'BubbleSort',
   components: {
-    BubbleSortVisualization
+    BarChartVisualization
   },
   maxListSize: 25,
   props: {
