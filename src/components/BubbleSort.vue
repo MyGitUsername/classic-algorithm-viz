@@ -17,36 +17,39 @@ export default {
   components: {
     BubbleSortVisualization
   },
-  maxNumber: 25,
+  maxListSize: 25,
   props: {
     title: String
   },
   data: function () {
     return {
-      listSize: Math.floor(Math.random() * this.$options.maxNumber) + 1,
+      listSize: Math.floor(Math.random() * this.$options.maxListSize) + 1,
       swapPairs: []
     }
   },
   computed: {
     list: function () {
       return Array.from(Array(this.listSize), () =>
-        Math.floor(Math.random() * this.$options.maxNumber)
+        Math.floor(Math.random() * this.$options.maxListSize)
       );
     }
   },
   methods: {
-    /* Return an integer in the range of [0, maxNumber]
+    /* Return an integer in the range of [0, maxListSize]
      * not equal to current listSize
      */
     getRandomListSize() {
       do {
-        var randomListSize = Math.floor(Math.random() * this.$options.maxNumber) + 1;
+        var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
       } while (this.listSize === this.randomListSize);
       return randomListSize;
     },
     refreshList: function() {
       this.listSize = this.getRandomListSize();
     },
+    /* Returns a an array of swaps (index pairs) necessary
+       to sort this list
+     */
     bubbleSort: function (arr) {
       let steps = [];
 
@@ -69,4 +72,8 @@ export default {
 }
 </script>
 <style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+}
 </style>

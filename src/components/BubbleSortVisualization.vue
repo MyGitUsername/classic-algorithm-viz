@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <svg id="barChart" :width="svgWidth" :height="svgHeight">
+    <svg id="barChart" ref="barChart">
       <g>
       <rect
         v-for="rect in rects"
@@ -33,9 +33,6 @@ export default {
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
   data: function () {
     return {
-      // TODO: don't hardcode, make adjust to size of window?
-      svgWidth: 800,
-      svgHeight: 400,
       rects: [],
       delay: 0
     }
@@ -43,24 +40,25 @@ export default {
   watch: {
     list: function () {
       this.initializeRects();
-     },
+    },
     swapPairs: function () {
+      this.delay = 0;
       this.swapPairs.forEach((v) => {
-        this.swapBars(v[0], v[1], 30)
+        this.swapBars(v[0], v[1], 100);
       });
     }
   },
   computed: {
     graphWidth: function () {
-      return this.svgWidth - this.$options.margins.left - this.$options.margins.right;
+      return 800 - this.$options.margins.left - this.$options.margins.right;
     },
     graphHeight: function () {
-      return this.svgHeight - this.$options.margins.top - this.$options.margins.bottom;
+      return 600 - this.$options.margins.top - this.$options.margins.bottom;
     },
     linearScale: function () {
       return d3
         .scaleLinear()
-        .domain([0, this.$parent.$options.maxNumber])
+        .domain([0, this.$parent.$options.maxListSize])
         .range([0, this.graphHeight]);
     }
   },
@@ -101,4 +99,12 @@ export default {
 }
 </script>
 <style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+}
+#barChart {
+  width: 100%;
+  height: 100%;
+}
 </style>
