@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <svg id="barChart" ref="barChart">
+    <svg id="barChart">
       <g>
       <rect
         v-for="rect in rects"
@@ -10,9 +10,6 @@
         :width="rect.width"
         :height="rect.height"
         :fill="rect.fill"
-        class="rect"
-        :style="rect.style"
-        :d="rect.d"
         :id="rect.id"
         >
       </rect>
@@ -31,31 +28,34 @@ export default {
     swapPairs: Array
   },
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
-  data: function () {
+  data () {
     return {
+      // TODO: Resize svg width and height based on window size
+      svgWidth: 800,
+      svgHeight: 600,
       rects: [],
       delay: 0
     }
   },
   watch: {
-    list: function () {
+    list () {
       this.initializeRects();
     },
-    swapPairs: function () {
+    swapPairs () {
       this.delay = 0;
-      this.swapPairs.forEach((v) => {
-        this.swapBars(v[0], v[1], 100);
+      this.swapPairs.forEach((arr) => {
+        this.swapBars(this.rects, arr[0], arr[1], 100);
       });
     }
   },
   computed: {
-    graphWidth: function () {
-      return 800 - this.$options.margins.left - this.$options.margins.right;
+    graphWidth () {
+      return this.svgWidth - this.$options.margins.left - this.$options.margins.right;
     },
-    graphHeight: function () {
-      return 600 - this.$options.margins.top - this.$options.margins.bottom;
+    graphHeight () {
+      return this.svgHeight - this.$options.margins.top - this.$options.margins.bottom;
     },
-    linearScale: function () {
+    linearScale () {
       return d3
         .scaleLinear()
         .domain([0, this.$parent.$options.maxListSize])
@@ -63,8 +63,7 @@ export default {
     }
   },
   methods: {
-    initializeRects: function () {
-      //console.log('computing rects, this.list is ' + this.list);
+    initializeRects () {
       let gap = 1;
       let barWidth = (this.graphWidth - gap * (this.list.length - 1)) / this.list.length;
 
@@ -81,20 +80,20 @@ export default {
         }
       })
     },
-    swapBars: function (idx1, idx2, speed) {
+    swapBars (arr, idx1, idx2, speed) {
       this.delay += speed;
       setTimeout(() => {
-        let tmpY = this.rects[idx1].y,
-          tmpHeight = this.rects[idx1].height;
-        this.$set(this.rects[idx1], 'y', this.rects[idx2].y)
-        this.$set(this.rects[idx1], 'height', this.rects[idx2].height)
-        this.$set(this.rects[idx2], 'y', tmpY)
-        this.$set(this.rects[idx2], 'height', tmpHeight)
+        let tmpY = arr[idx1].y,
+          tmpHeight = arr[idx1].height;
+        this.$set(arr[idx1], 'y', arr[idx2].y)
+        this.$set(arr[idx1], 'height', arr[idx2].height)
+        this.$set(arr[idx2], 'y', tmpY)
+        this.$set(arr[idx2], 'height', tmpHeight)
       }, this.delay)
     }
   },
-  mounted:function () {
-    this.initializeRects(); // Move to earlier hook
+  mounted () {
+    this.initializeRects();
   }
 }
 </script>

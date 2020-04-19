@@ -21,38 +21,35 @@ export default {
   props: {
     title: String
   },
-  data: function () {
+  data () {
     return {
-      listSize: Math.floor(Math.random() * this.$options.maxListSize) + 1,
+      listSize: 0,
       swapPairs: []
     }
   },
   computed: {
-    list: function () {
-      return Array.from(Array(this.listSize), () =>
-        Math.floor(Math.random() * this.$options.maxListSize)
-      );
+    list () {
+      return Array.from(Array(this.listSize), () => this.getRandomListSize());
     }
   },
   methods: {
     /* Return an integer in the range of [0, maxListSize]
      * not equal to current listSize
      */
-    getRandomListSize() {
+    getRandomListSize () {
       do {
         var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
-      } while (this.listSize === this.randomListSize);
+      } while (this.listSize === this.randomListSize)
       return randomListSize;
     },
-    refreshList: function() {
+    refreshList () {
       this.listSize = this.getRandomListSize();
     },
-    /* Returns a an array of swaps (index pairs) necessary
-       to sort this list
+    /* Returns a an array of swaps (index pairs) that will
+     * sort this list
      */
-    bubbleSort: function (arr) {
+    bubbleSort (arr) {
       let steps = [];
-
       for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr.length - i - 1; j++) {
           if (arr[j + 1] < arr[j]) {
@@ -66,8 +63,8 @@ export default {
       return steps;
     }
   },
-  mounted:function () {
-    console.log('mounted bubble sort')
+  mounted () {
+    this.refreshList();
   }
 }
 </script>
