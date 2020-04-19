@@ -56,14 +56,10 @@ export default {
 
 <style>
 @keyframes highlightGreen {
-  0% {fill: green;}
   50% {fill: green;}
-  100% {fill: green;}
 }
 
 @keyframes highlightYellow {
-  0% {fill: yellow;}
   50% {fill: yellow;}
-  100% {fill: yellow;}
 }
 </style>

@@ -39,7 +39,7 @@ export default {
     getRandomListSize () {
       do {
         var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
-      } while (this.listSize === this.randomListSize)
+      } while (this.listSize === randomListSize)
       return randomListSize;
     },
     refreshList () {

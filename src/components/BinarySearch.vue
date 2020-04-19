@@ -1,82 +1,84 @@
 <template>
   <v-container>
     <v-btn @click="refreshList()">New Data</v-btn>
-    <v-btn @click="barChartAnimationData = binarySort(list)">Sort</v-btn>
-    <BarChart
+    <v-btn @click="barChartAnimationData = binarySearch(list, list[3], 0, listSize - 1)">Sort</v-btn>
+    <BubbleSortVisualization
       :list='list'
-      :animationData='barChartAnimationData'
+      :highlightBars='barChartAnimationData'
       />
   </v-container>
 </template>
 
 <script>
-import BarChart from '@/components/BarChart.vue';
+import BubbleSortVisualization from '@/components/BubbleSortVisualization.vue';
 
 export default {
   name: 'BinarySearch',
   components: {
-    BarChart
+    BubbleSortVisualization
   },
-  maxNumber: 100,
+  maxListSize: 25,
   props: {
     title: String
   },
-  data: function () {
+  data () {
     return {
-      delay: 3000,
-      barChartAnimationData: [],
-      itemsNumber: Math.floor(Math.random() * this.$options.maxNumber) + 1
+      listSize: 0,
+      barChartAnimationData: []
     }
   },
   computed: {
-    list: function () {
-      return Array.from(Array(this.itemsNumber), () =>
-        Math.floor(Math.random() * this.$options.maxNumber)
-      ).sort((a,b) => a - b)
+    list () {
+      return Array.from(Array(this.listSize), () =>
+        this.getRandomListSize()
+      ).sort((a,b) => a - b);
     }
   },
   methods: {
-    refreshList: function() {
-      console.log('refresh')
-      this.delay = 3000;
+    /* Return an integer in the range of [0, maxListSize]
+     * not equal to current listSize
+     */
+    getRandomListSize () {
       do {
-        var newItemsNumber = Math.floor(Math.random() * this.$options.maxNumber) + 1;
-      } while (this.itemsNumber == newItemsNumber)
-      this.itemsNumber = newItemsNumber; // triggers the list to recompute
-      let rndIdx = Math.floor(Math.random() * this.itemsNumber);
-      this.binarySearch(this.list, this.list[rndIdx], 0, this.itemsNumber - 1);
+        var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
+      } while (this.listSize === randomListSize)
+      return randomListSize;
     },
-
-    binarySearch: function (array, val, start, end) {
-      console.log('in binary search start ' + start + ', end: ' + end)
-      let mid  = Math.floor((start + end) / 2)
+    refreshList () {
+      this.listSize = this.getRandomListSize();
+    },
+    binarySearch: function (arr, val, start, end) {
       let barChartAnimationData = [];
 
-      if (val != array[mid]) {
-        barChartAnimationData.push(
-          {idx: start, color: 'highlightYellow', delay: this.delay},
-          {idx: end, color: 'highlightYellow', delay: this.delay},
-          {idx: mid, color: 'highlightGreen', delay: this.delay})
-      } else {
-        console.log('in binary search pushing ' + mid)
-        barChartAnimationData.push({idx: mid, color: 'highlightGreen', delay: this.delay})
-      }
-      this.delay += 1000;
-
-      if (val < array[mid]) {
-         this.binarySearch(array, val, start, mid - 1)
-      } else if (val > array[mid]) {
-        this.binarySearch(array, val, mid + 1, end)
-      } else {
-        return barChartAnimationData;
+      while (start <=end) {
+        let mid  = Math.floor((start + end) / 2)
+        if (val < arr[mid]) {
+          barChartAnimationData.push([
+            {idx: start, color: 'highlightYellow'},
+            {idx: end, color: 'highlightYellow'},
+            {idx: mid, color: 'highlightGreen'}])
+          end = mid - 1;
+        } else if (val > arr[mid]) {
+          barChartAnimationData.push([
+            {idx: start, color: 'highlightYellow'},
+            {idx: end, color: 'highlightYellow'},
+            {idx: mid, color: 'highlightGreen'}])
+          start = mid + 1;
+        } else {
+          barChartAnimationData.push([{idx: mid, color: 'highlightGreen'}])
+          return barChartAnimationData;
+        }
       }
     },
   },
   mounted:function () {
-    let rndIdx = Math.floor(Math.random() * this.itemsNumber);
-    this.binarySearch(this.list, this.list[rndIdx], 0, this.itemsNumber - 1);
+    this.refreshList();
   }
 }
 </script>
 <style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+}
 </style>
