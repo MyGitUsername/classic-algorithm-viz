@@ -27,7 +27,7 @@ export default {
   props: {
     list: Array,
     swapPairs: Array,
-    highlightBars: Array
+    highlightArr: Array
   },
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
   data () {
@@ -49,10 +49,10 @@ export default {
         this.swapBars(this.rects, arr[0], arr[1], 100);
       });
     },
-    highlightBars (newArr) {
+    highlightArr (newArr) {
       this.delay = 0;
-      newArr.forEach((algoStep) => {
-        this.highlightBar(this.rects, algoStep, 1000);
+      newArr.forEach((obj) => {
+        this.highlightBars(this.rects, obj, 1000);
       })
     }
   },
@@ -99,28 +99,20 @@ export default {
         this.$set(arr[idx2], 'height', tmpHeight)
       }, this.delay)
     },
-    highlightBar: function (rects, highlightArr, speed) {
+    highlightBars: function (rects, highlightObj, speed) {
+      console.log('in highlighBar')
       this.delay += speed;
-      for (let i = highlightArr[0]; i <= highlightArr[2]; i++) {
-        let color = 'darkenSteelBlue';
-        if (i == highlightArr[1]) color = 'highlightBrown';
+      setTimeout(() => {
+        for (let i = highlightObj.start; i <= highlightObj.end; i++) {
+          let color = (i == highlightObj.mid ? 'highlightBrown' : 'darkenSteelBlue');
 
-        if (rects[i].style.length > 0) {
-          rects[i].style +=  ", " + color + " 1s " + this.delay + "ms ease ";
-        } else {
-          rects[i].style = "animation: " + color + " 1s " + this.delay + "ms ease ";
+          if (rects[i].style.length > 0) {
+            rects[i].style +=  ", " + color + " 1s ease";
+          } else {
+            rects[i].style = "animation: " + color + " 1s ease";
+          }
         }
-      }
-
-      /*
-      highlightArr.forEach((obj) => {
-        if (rects[obj.idx].style.length > 0) {
-          rects[obj.idx].style +=  ", " + obj.color + " 1s " + this.delay + "ms ease ";
-        } else {
-          rects[obj.idx].style = "animation: " + obj.color + " 1s " + this.delay + "ms ease ";
-        }
-      })
-      */
+      }, this.delay);
     }
   },
   mounted () {

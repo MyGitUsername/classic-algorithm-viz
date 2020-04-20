@@ -20,7 +20,7 @@
     </v-row>
     <BarChartVisualization
       :list='list'
-      :highlightBars='barChartAnimationData'
+      :highlightArr='barChartAnimationData'
       />
   </v-container>
 </template>
@@ -50,7 +50,7 @@ export default {
   computed: {
     list () {
       return Array.from(Array(this.listSize), () =>
-        this.getRandomListSize()
+        this.getRandomNumber()
       ).sort((a,b) => a - b);
     },
     validSearchIdx () {
@@ -58,6 +58,9 @@ export default {
     }
   },
   methods: {
+    getRandomNumber () {
+      return Math.random() * this.$options.maxListSize;
+    },
     /* Return an integer in the range of [0, maxListSize]
      * not equal to current listSize
      */
@@ -75,12 +78,7 @@ export default {
 
       while (start <=end) {
         let mid  = Math.floor((start + end) / 2)
-        barChartAnimationData.push([start, mid, end]);
-        /*
-          {idx: start, color: 'highlightYellow'},
-          {idx: mid, color: 'highlightGreen'},
-          {idx: end, color: 'highlightYellow'}])
-          */
+        barChartAnimationData.push({start: start, mid: mid, end: end});
 
         if (val < arr[mid]) {
           end = mid - 1;
