@@ -1,7 +1,23 @@
 <template>
   <v-container>
-    <v-btn @click="refreshList()">New Data</v-btn>
-    <v-btn @click="barChartAnimationData = binarySearch(list, list[3], 0, listSize - 1)">Search</v-btn>
+    <v-row>
+      <v-col>
+        <v-btn @click="refreshList()">New Data</v-btn>
+        <v-btn
+          @click="barChartAnimationData = binarySearch(list, list[searchIdx], 0, listSize - 1)"
+          :disabled="!validSearchIdx">
+          Search
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-text-field
+          v-model="searchIdx"
+          placeholder="Search Index"
+          :rules="[rules.searchIdx]"
+          solo>
+        </v-text-field>
+      </v-col>
+    </v-row>
     <BarChartVisualization
       :list='list'
       :highlightBars='barChartAnimationData'
@@ -24,7 +40,11 @@ export default {
   data () {
     return {
       listSize: 0,
-      barChartAnimationData: []
+      barChartAnimationData: [],
+      searchIdx: null,
+      rules: {
+        searchIdx: value => (value >= 0 && value < this.listSize) || 'Must be a number between 0 and ' + (this.listSize - 1)
+      }
     }
   },
   computed: {
@@ -32,6 +52,9 @@ export default {
       return Array.from(Array(this.listSize), () =>
         this.getRandomListSize()
       ).sort((a,b) => a - b);
+    },
+    validSearchIdx () {
+      return this.searchIdx == "" || this.searchIdx == null ? false : this.searchIdx >= 0 && this.searchIdx < this.listSize;
     }
   },
   methods: {
@@ -52,20 +75,18 @@ export default {
 
       while (start <=end) {
         let mid  = Math.floor((start + end) / 2)
+        barChartAnimationData.push([start, mid, end]);
+        /*
+          {idx: start, color: 'highlightYellow'},
+          {idx: mid, color: 'highlightGreen'},
+          {idx: end, color: 'highlightYellow'}])
+          */
+
         if (val < arr[mid]) {
-          barChartAnimationData.push([
-            {idx: start, color: 'highlightYellow'},
-            {idx: end, color: 'highlightYellow'},
-            {idx: mid, color: 'highlightGreen'}])
           end = mid - 1;
         } else if (val > arr[mid]) {
-          barChartAnimationData.push([
-            {idx: start, color: 'highlightYellow'},
-            {idx: end, color: 'highlightYellow'},
-            {idx: mid, color: 'highlightGreen'}])
           start = mid + 1;
         } else {
-          barChartAnimationData.push([{idx: mid, color: 'highlightGreen'}])
           return barChartAnimationData;
         }
       }

@@ -43,9 +43,9 @@ export default {
     list () {
       this.initializeRects();
     },
-    swapPairs () {
+    swapPairs (newVal) {
       this.delay = 0;
-      this.swapPairs.forEach((arr) => { // TODO: change this.swapbars to func parameter
+      newVal.forEach((arr) => {
         this.swapBars(this.rects, arr[0], arr[1], 100);
       });
     },
@@ -101,6 +101,18 @@ export default {
     },
     highlightBar: function (rects, highlightArr, speed) {
       this.delay += speed;
+      for (let i = highlightArr[0]; i <= highlightArr[2]; i++) {
+        let color = 'darkenSteelBlue';
+        if (i == highlightArr[1]) color = 'highlightBrown';
+
+        if (rects[i].style.length > 0) {
+          rects[i].style +=  ", " + color + " 1s " + this.delay + "ms ease ";
+        } else {
+          rects[i].style = "animation: " + color + " 1s " + this.delay + "ms ease ";
+        }
+      }
+
+      /*
       highlightArr.forEach((obj) => {
         if (rects[obj.idx].style.length > 0) {
           rects[obj.idx].style +=  ", " + obj.color + " 1s " + this.delay + "ms ease ";
@@ -108,6 +120,7 @@ export default {
           rects[obj.idx].style = "animation: " + obj.color + " 1s " + this.delay + "ms ease ";
         }
       })
+      */
     }
   },
   mounted () {
