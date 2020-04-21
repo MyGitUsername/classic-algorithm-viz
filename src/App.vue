@@ -2,8 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
-      dark
+      color="#ffdb58"
       >
       <v-menu offset-y>
         <template v-slot:activator="{ on }">

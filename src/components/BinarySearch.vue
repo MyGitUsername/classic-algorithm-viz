@@ -17,6 +17,8 @@
           solo>
         </v-text-field>
       </v-col>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
     </v-row>
     <BarChartVisualization
       :list='list'
