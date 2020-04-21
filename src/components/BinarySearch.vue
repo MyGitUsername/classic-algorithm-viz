@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-btn @click="refreshList()">New Data</v-btn>
+        <v-btn @click="refreshList(true)">New Data</v-btn>
         <v-btn
           @click="barChartAnimationData = binarySearch(list, list[searchIdx], 0, listSize - 1)"
           :disabled="!validSearchIdx">
@@ -29,19 +29,16 @@
 
 <script>
 import BarChartVisualization from '@/components/BarChartVisualization.vue';
+import listGenerator from '@/mixins/listGenerator.js';
 
 export default {
   name: 'BinarySearch',
   components: {
     BarChartVisualization
   },
-  maxListSize: 25,
-  props: {
-    title: String
-  },
+  mixins: [listGenerator],
   data () {
     return {
-      listSize: 0,
       barChartAnimationData: [],
       searchIdx: null,
       rules: {
@@ -50,31 +47,11 @@ export default {
     }
   },
   computed: {
-    list () {
-      return Array.from(Array(this.listSize), () =>
-        this.getRandomNumber()
-      ).sort((a,b) => a - b);
-    },
     validSearchIdx () {
       return this.searchIdx == "" || this.searchIdx == null ? false : this.searchIdx >= 0 && this.searchIdx < this.listSize;
     }
   },
   methods: {
-    getRandomNumber () {
-      return Math.random() * this.$options.maxListSize;
-    },
-    /* Return an integer in the range of [0, maxListSize]
-     * not equal to current listSize
-     */
-    getRandomListSize () {
-      do {
-        var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
-      } while (this.listSize === randomListSize)
-      return randomListSize;
-    },
-    refreshList () {
-      this.listSize = this.getRandomListSize();
-    },
     binarySearch: function (arr, val, start, end) {
       let barChartAnimationData = [];
 
@@ -93,7 +70,7 @@ export default {
     },
   },
   mounted:function () {
-    this.refreshList();
+    this.refreshList(true);
   }
 }
 </script>

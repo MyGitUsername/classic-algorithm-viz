@@ -11,40 +11,21 @@
 
 <script>
 import BarChartVisualization from '@/components/BarChartVisualization.vue';
+import listGenerator from '@/mixins/listGenerator.js';
 
 export default {
   name: 'BubbleSort',
   components: {
     BarChartVisualization
   },
-  maxListSize: 25,
-  props: {
-    title: String
-  },
+  mixins: [listGenerator],
   data () {
     return {
       listSize: 0,
       swapPairs: []
     }
   },
-  computed: {
-    list () {
-      return Array.from(Array(this.listSize), () => this.getRandomListSize());
-    }
-  },
   methods: {
-    /* Return an integer in the range of [0, maxListSize]
-     * not equal to current listSize
-     */
-    getRandomListSize () {
-      do {
-        var randomListSize = Math.floor(Math.random() * this.$options.maxListSize) + 1;
-      } while (this.listSize === randomListSize)
-      return randomListSize;
-    },
-    refreshList () {
-      this.listSize = this.getRandomListSize();
-    },
     /* Returns a an array of swaps (index pairs) that will
      * sort this list
      */
