@@ -5,7 +5,7 @@
         <v-btn @click="refreshList(true)">New Data</v-btn>
         <v-btn
           @click="barChartAnimationData = binarySearch(list, list[searchIdx], 0, listSize - 1)"
-          :disabled="!validSearchIdx">
+          :disabled="!isValidSearchIdx">
           Search
         </v-btn>
       </v-col>
@@ -23,6 +23,7 @@
     <BarChartVisualization
       :list='list'
       :highlightArr='barChartAnimationData'
+      :showXAxis='true'
       />
   </v-container>
 </template>
@@ -42,18 +43,20 @@ export default {
       barChartAnimationData: [],
       searchIdx: null,
       rules: {
-        searchIdx: value => (value >= 0 && value < this.listSize) || 'Must be a number between 0 and ' + (this.listSize - 1)
+        searchIdx: () => this.isValidSearchIdx || 'Must be a number between 0 and ' + (this.listSize - 1)
       }
     }
   },
   computed: {
-    validSearchIdx () {
-      return this.searchIdx == "" || this.searchIdx == null ? false : this.searchIdx >= 0 && this.searchIdx < this.listSize;
+    isValidSearchIdx () {
+      const isEmpty = this.searchIdx == "" || this.searchIdx == null,
+        inRange = this.searchIdx >= 0 && this.searchIdx < this.listSize;
+      return !isEmpty && inRange;
     }
   },
   methods: {
     binarySearch: function (arr, val, start, end) {
-      let barChartAnimationData = [];
+      const barChartAnimationData = [];
 
       while (start <=end) {
         let mid  = Math.floor((start + end) / 2)

@@ -15,6 +15,7 @@
         >
       </rect>
       </g>
+      <g v-axis:x="scale" v-show="showXAxis" :transform="`translate(0, ${svgHeight})`"></g>
     </svg>
   </v-container>
 </template>
@@ -24,12 +25,18 @@ import * as d3 from 'd3';
 
 export default {
   name: 'BarChartVisualization',
-  props: {
-    list: Array,
-    swapPairs: Array,
-    highlightArr: Array
-  },
+  swapTransitionDelay: 200,
+  highlightDelay: 1000,
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
+  props: {
+    list: {
+      type: Array,
+      required: true
+    },
+    swapPairs: Array,
+    highlightArr: Array,
+    showXAxis: Boolean
+  },
   data () {
     return {
       // TODO: Resize svg width and height based on window size
@@ -46,13 +53,13 @@ export default {
     swapPairs (newVal) {
       this.delay = 0;
       newVal.forEach((arr) => {
-        this.swapBars(this.rects, arr[0], arr[1], 100);
+        this.swapBars(this.rects, arr[0], arr[1], this.$options.swapTransitionDelay);
       });
     },
     highlightArr (newArr) {
       this.delay = 0;
       newArr.forEach((obj) => {
-        this.highlightBars(this.rects, obj, 1000);
+        this.highlightBars(this.rects, obj, this.$options.highlightDelay);
       })
     }
   },
@@ -63,25 +70,39 @@ export default {
     graphHeight () {
       return this.svgHeight - this.$options.margins.top - this.$options.margins.bottom;
     },
-    linearScale () {
-      return d3
-        .scaleLinear()
-        .domain([0, this.$parent.$options.maxListSize])
-        .range([0, this.graphHeight]);
+    scale () {
+      const x = d3.scaleBand()
+        .range([0, this.svgWidth])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .range([this.svgHeight, 0]);
+
+      return {x, y}
+    }
+  },
+  directives: {
+    // Create the axises
+    axis(el, binding) {
+      const axis = binding.arg;
+      const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
+      const methodArg = binding.value[axis];
+
+      d3.select(el).call(d3[axisMethod](methodArg));
     }
   },
   methods: {
     initializeRects () {
-      let gap = 1;
-      let barWidth = (this.graphWidth - gap * (this.list.length - 1)) / this.list.length;
+      this.scale.x.domain(this.list.map((d, i) => i ));
+      this.scale.y.domain([0, d3.max(this.list, (d) => d)]);
 
       this.rects = this.list.map((d,i) => {
         return {
           id: "bar-" + i,
-          width: barWidth,
-          height:  this.linearScale(d),
-          x: i * barWidth + i * gap + this.$options.margins.left,
-          y: this.graphHeight - this.linearScale(d),
+          width: this.scale.x.bandwidth(),
+          height:  this.svgHeight - this.scale.y(d),
+          x: this.scale.x(i),
+          y: this.scale.y(d),
           fill: 'rgba(64, 84, 178, 1)',
           style: "",
           d: d
@@ -91,7 +112,7 @@ export default {
     swapBars (arr, idx1, idx2, speed) {
       this.delay += speed;
       setTimeout(() => {
-        let tmpY = arr[idx1].y,
+        const tmpY = arr[idx1].y,
           tmpHeight = arr[idx1].height;
         this.$set(arr[idx1], 'y', arr[idx2].y)
         this.$set(arr[idx1], 'height', arr[idx2].height)
@@ -100,11 +121,10 @@ export default {
       }, this.delay)
     },
     highlightBars: function (rects, highlightObj, speed) {
-      console.log('in highlighBar')
       this.delay += speed;
       setTimeout(() => {
         for (let i = highlightObj.start; i <= highlightObj.end; i++) {
-          let color = (i == highlightObj.mid ? 'highlightBrown' : 'darkenSteelBlue');
+          const color = (i == highlightObj.mid ? 'highlightBrown' : 'darkenSteelBlue');
 
           if (rects[i].style.length > 0) {
             rects[i].style +=  ", " + color + " 1s ease";
