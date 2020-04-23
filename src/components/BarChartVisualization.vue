@@ -22,11 +22,12 @@
 
 <script>
 import * as d3 from 'd3';
+import gsap from "gsap";
 
 export default {
   name: 'BarChartVisualization',
   swapTransitionDelay: 200,
-  highlightDelay: 1000,
+  highlightDelay: 500,
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
   props: {
     list: {
@@ -43,7 +44,8 @@ export default {
       svgWidth: 800,
       svgHeight: 600,
       rects: [],
-      delay: 0
+      delay: 0,
+      idxToX: new Map()
     }
   },
   watch: {
@@ -51,10 +53,24 @@ export default {
       this.initializeRects();
     },
     swapPairs (newVal) {
-      this.delay = 0;
-      newVal.forEach((arr) => {
-        this.swapBars(this.rects, arr[0], arr[1], this.$options.swapTransitionDelay);
-      });
+      const duration = .25
+
+      //Map rect idx to x coordinate
+      this.rects.forEach((d,i) => this.idxToX.set(i, this.rects[i].x))
+      var tl = gsap.timeline({defaults: {duration: duration}});
+
+      newVal.forEach((pair, i) => {
+        const idx1 = pair[0],
+          idx2 = pair[1];
+
+        tl.addLabel("step" + i)
+          .to(this.rects[idx1], {x: this.idxToX.get(idx2)}, "step" + i)
+          .to(this.rects[idx2], {x: this.idxToX.get(idx1)}, "step" + i);
+
+        let t = this.rects[idx1]
+        this.$set(this.rects, idx1, this.rects[idx2])
+        this.$set(this.rects, idx2, t)
+      })
     },
     highlightArr (newArr) {
       this.delay = 0;
@@ -108,17 +124,6 @@ export default {
           d: d
         }
       })
-    },
-    swapBars (arr, idx1, idx2, speed) {
-      this.delay += speed;
-      setTimeout(() => {
-        const tmpY = arr[idx1].y,
-          tmpHeight = arr[idx1].height;
-        this.$set(arr[idx1], 'y', arr[idx2].y)
-        this.$set(arr[idx1], 'height', arr[idx2].height)
-        this.$set(arr[idx2], 'y', tmpY)
-        this.$set(arr[idx2], 'height', tmpHeight)
-      }, this.delay)
     },
     highlightBars: function (rects, highlightObj, speed) {
       this.delay += speed;
