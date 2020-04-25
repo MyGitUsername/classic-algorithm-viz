@@ -4,16 +4,16 @@
       <v-col>
         <v-btn @click="refreshList(true)">New Data</v-btn>
         <v-btn
-          @click="barChartAnimationData = binarySearch(list, list[searchIdx], 0, listSize - 1)"
-          :disabled="!isValidSearchIdx">
+          @click="barChartAnimationData = binarySearch(list, searchVal, 0, listSize - 1)"
+          :disabled="!isValidSearchVal">
           Search
         </v-btn>
       </v-col>
       <v-col>
         <v-text-field
-          v-model="searchIdx"
-          placeholder="Search Index"
-          :rules="[rules.searchIdx]"
+          v-model="searchVal"
+          placeholder="Search Value"
+          :rules="[rules.searchVal]"
           solo>
         </v-text-field>
       </v-col>
@@ -23,7 +23,6 @@
     <BarChartVisualization
       :list='list'
       :highlightArr='barChartAnimationData'
-      :showXAxis='true'
       />
   </v-container>
 </template>
@@ -41,16 +40,16 @@ export default {
   data () {
     return {
       barChartAnimationData: [],
-      searchIdx: null,
+      searchVal: null,
       rules: {
-        searchIdx: () => this.isValidSearchIdx || 'Must be a number between 0 and ' + (this.listSize - 1)
+        searchVal: () => this.isValidSearchVal || "Must be a value in the list"
       }
     }
   },
   computed: {
-    isValidSearchIdx () {
-      const isEmpty = this.searchIdx == "" || this.searchIdx == null,
-        inRange = this.searchIdx >= 0 && this.searchIdx < this.listSize;
+    isValidSearchVal () {
+      const isEmpty = this.searchVal == "" || this.searchVal == null,
+        inRange = this.list.includes(Number.parseInt(this.searchVal))
       return !isEmpty && inRange;
     }
   },

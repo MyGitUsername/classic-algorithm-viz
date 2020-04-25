@@ -1,7 +1,11 @@
 <template>
   <v-container>
-    <v-btn @click="refreshList()">New Data</v-btn>
-    <v-btn @click="swapPairs = bubbleSort(list)">Sort</v-btn>
+    <v-row>
+      <v-col>
+        <v-btn @click="refreshList()">New Data</v-btn>
+        <v-btn @click="swapPairs = bubbleSort(list)">Sort</v-btn>
+      </v-col>
+    </v-row>
     <BarChartVisualization
       :list="list"
       :swapPairs="swapPairs"

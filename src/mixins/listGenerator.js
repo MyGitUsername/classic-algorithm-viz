@@ -1,4 +1,5 @@
 const listGenerator = {
+  maxValue: 100,
   maxListSize: 25,
   minListSize: 3,
   data () {
@@ -7,16 +8,16 @@ const listGenerator = {
     }
   },
   computed: {
+    /* Contains unique randomly generated numbers */
     list () {
-      return Array.from(Array(this.listSize), () =>
-        this.getRandomNumber()
-      );
+      let set = new Set();
+      while (set.size !== this.listSize) {
+          set.add(Math.floor(Math.random() * this.$options.maxValue) + 1);
+      }
+      return [...set];
     }
   },
   methods: {
-    getRandomNumber () {
-      return Math.random() * this.$options.maxListSize;
-    },
     /* Return an integer in the range of [minListSize, maxListSize]
      * not equal to current listSize
      */

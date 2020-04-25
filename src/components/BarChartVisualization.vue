@@ -1,10 +1,10 @@
 <template>
   <v-container>
+    <TimelineControlButtons :tl="tl"/>
     <svg id="barChart">
-      <g>
+      <g v-for="rect in rects"
+         :key="rect.id">
       <rect
-        v-for="rect in rects"
-        :key="rect.id"
         :x="rect.x"
         :y="rect.y"
         :width="rect.width"
@@ -14,6 +14,12 @@
         :id="rect.id"
         >
       </rect>
+      <text
+        :x="rect.x + Math.floor(rect.width / 4)"
+        :y="rect.d > 80 ? rect.y + 30 : rect.y - 15"
+        >
+      {{ rect.d }}
+      </text>
       </g>
       <g v-axis:x="scale" v-show="showXAxis" :transform="`translate(0, ${svgHeight})`"></g>
     </svg>
@@ -23,12 +29,17 @@
 <script>
 import * as d3 from 'd3';
 import gsap from "gsap";
+import TimelineControlButtons from '@/components/TimelineControlButtons.vue';
 
 export default {
   name: 'BarChartVisualization',
+  components: {
+    TimelineControlButtons
+  },
   swapTransitionDelay: 200,
   highlightDelay: 500,
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
+  barColor: 'rgba(64, 84, 178, 1)',
   props: {
     list: {
       type: Array,
@@ -44,7 +55,7 @@ export default {
       svgWidth: 800,
       svgHeight: 600,
       rects: [],
-      delay: 0,
+      tl: {}, // fixme: Timeline
       idxToX: new Map()
     }
   },
@@ -57,15 +68,16 @@ export default {
 
       //Map rect idx to x coordinate
       this.rects.forEach((d,i) => this.idxToX.set(i, this.rects[i].x))
-      var tl = gsap.timeline({defaults: {duration: duration}});
+      this.tl = gsap.timeline({defaults: {duration: duration}});
 
       newVal.forEach((pair, i) => {
         const idx1 = pair[0],
-          idx2 = pair[1];
+          idx2 = pair[1],
+          stepNum = "step" + i;
 
-        tl.addLabel("step" + i)
-          .to(this.rects[idx1], {x: this.idxToX.get(idx2)}, "step" + i)
-          .to(this.rects[idx2], {x: this.idxToX.get(idx1)}, "step" + i);
+        this.tl.addLabel(stepNum)
+          .to(this.rects[idx1], {x: this.idxToX.get(idx2)}, stepNum)
+          .to(this.rects[idx2], {x: this.idxToX.get(idx1)}, stepNum);
 
         let t = this.rects[idx1]
         this.$set(this.rects, idx1, this.rects[idx2])
@@ -73,9 +85,24 @@ export default {
       })
     },
     highlightArr (newArr) {
-      this.delay = 0;
-      newArr.forEach((obj) => {
-        this.highlightBars(this.rects, obj, this.$options.highlightDelay);
+      this.tl = gsap.timeline();
+
+      newArr.forEach((highlightObj, i, arr) => {
+        if (i === arr.length - 1) {
+          this.tl.eventCallback('onComplete', (highlightObj) => {
+            this.tl.to(this.rects[highlightObj.mid], {fill: '#b29e40'})
+          }, [highlightObj]);
+        }
+
+        let stepNum = "step" + i;
+        this.tl.addLabel(stepNum);
+        for (let j = highlightObj.start; j <= highlightObj.end; j++) {
+          const color = (j == highlightObj.mid ? '#b29e40' : '#2c397a');
+          this.tl.to(this.rects[j], {keyframes: [
+            {fill: color, delay: .25 },
+            {fill: this.$options.barColor, delay: .5}
+          ]}, stepNum)
+        }
       })
     }
   },
@@ -104,7 +131,10 @@ export default {
       const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
       const methodArg = binding.value[axis];
 
-      d3.select(el).call(d3[axisMethod](methodArg));
+      d3.select(el).call(d3[axisMethod](methodArg)
+        .tickSizeInner(0)
+        .tickSizeOuter(0)
+        .tickPadding(10))
     }
   },
   methods: {
@@ -124,20 +154,6 @@ export default {
           d: d
         }
       })
-    },
-    highlightBars: function (rects, highlightObj, speed) {
-      this.delay += speed;
-      setTimeout(() => {
-        for (let i = highlightObj.start; i <= highlightObj.end; i++) {
-          const color = (i == highlightObj.mid ? 'highlightBrown' : 'darkenSteelBlue');
-
-          if (rects[i].style.length > 0) {
-            rects[i].style +=  ", " + color + " 1s ease";
-          } else {
-            rects[i].style = "animation: " + color + " 1s ease";
-          }
-        }
-      }, this.delay);
     }
   },
   mounted () {
@@ -151,7 +167,10 @@ export default {
   height: 100%;
 }
 #barChart {
-  width: 100%;
-  height: 100%;
+  width: 75%;
+  height: 75%;
+}
+text {
+  font-size: !important 3em;
 }
 </style>
