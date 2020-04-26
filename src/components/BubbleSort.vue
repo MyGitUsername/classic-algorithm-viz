@@ -5,6 +5,9 @@
         <v-btn @click="refreshList()">New Data</v-btn>
         <v-btn @click="swapPairs = bubbleSort(list)">Sort</v-btn>
       </v-col>
+      <v-col>
+        <TimelineControlButtons/>
+      </v-col>
     </v-row>
     <BarChartVisualization
       :list="list"
@@ -16,11 +19,13 @@
 <script>
 import BarChartVisualization from '@/components/BarChartVisualization.vue';
 import listGenerator from '@/mixins/listGenerator.js';
+import TimelineControlButtons from '@/components/TimelineControlButtons.vue';
 
 export default {
   name: 'BubbleSort',
   components: {
-    BarChartVisualization
+    BarChartVisualization,
+    TimelineControlButtons
   },
   mixins: [listGenerator],
   data () {

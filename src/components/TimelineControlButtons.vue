@@ -1,15 +1,15 @@
 <template>
   <v-row>
-    <v-btn @click='tl.tweenTo(tl.previousLabel())' >
+    <v-btn @click="$store.commit('stepBackward')">
       <img src="@/assets/step-backward-solid.svg" height=20 width=20>
     </v-btn>
-    <v-btn @click='tl.play()' >
+    <v-btn @click="$store.commit('play')">
       <img src="@/assets/play-solid.svg" height=20 width=20>
     </v-btn>
-    <v-btn @click='tl.tweenTo(tl.nextLabel())'>
+    <v-btn @click="$store.commit('pause')">
       <img src="@/assets/pause-solid.svg" height=20 width=20>
     </v-btn>
-    <v-btn @click='tl.tweenTo(tl.nextLabel())' >
+    <v-btn @click="$store.commit('stepForward')">
       <img src="@/assets/step-forward-solid.svg" height=20 width=20>
     </v-btn>
   </v-row>
@@ -31,15 +31,7 @@ export default {
     }
   },
   props: {
-    tl: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    play () {
-      console.log('you hit play')
-    }
+    //
   }
 }
 </script>

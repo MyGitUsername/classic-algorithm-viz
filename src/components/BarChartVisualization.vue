@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <TimelineControlButtons :tl="tl"/>
     <svg id="barChart">
       <g v-for="rect in rects"
          :key="rect.id">
@@ -21,21 +20,16 @@
       {{ rect.d }}
       </text>
       </g>
-      <g v-axis:x="scale" v-show="showXAxis" :transform="`translate(0, ${svgHeight})`"></g>
     </svg>
   </v-container>
 </template>
 
 <script>
 import * as d3 from 'd3';
-import gsap from "gsap";
-import TimelineControlButtons from '@/components/TimelineControlButtons.vue';
+import gsap from 'gsap';
 
 export default {
   name: 'BarChartVisualization',
-  components: {
-    TimelineControlButtons
-  },
   swapTransitionDelay: 200,
   highlightDelay: 500,
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
@@ -46,8 +40,7 @@ export default {
       required: true
     },
     swapPairs: Array,
-    highlightArr: Array,
-    showXAxis: Boolean
+    highlightArr: Array
   },
   data () {
     return {
@@ -55,7 +48,6 @@ export default {
       svgWidth: 800,
       svgHeight: 600,
       rects: [],
-      tl: {}, // fixme: Timeline
       idxToX: new Map()
     }
   },
@@ -65,43 +57,44 @@ export default {
     },
     swapPairs (newVal) {
       const duration = .25
-
       //Map rect idx to x coordinate
       this.rects.forEach((d,i) => this.idxToX.set(i, this.rects[i].x))
-      this.tl = gsap.timeline({defaults: {duration: duration}});
+      this.$store.commit('setTimeline', gsap.timeline({defaults: {duration: duration}}));
 
       newVal.forEach((pair, i) => {
         const idx1 = pair[0],
           idx2 = pair[1],
           stepNum = "step" + i;
 
-        this.tl.addLabel(stepNum)
-          .to(this.rects[idx1], {x: this.idxToX.get(idx2)}, stepNum)
-          .to(this.rects[idx2], {x: this.idxToX.get(idx1)}, stepNum);
+        this.$store.commit('addLabel', stepNum);
+        this.$store.commit('to', {
+            target: this.rects[idx1],
+            vars: {x: this.idxToX.get(idx2)},
+            postion: stepNum});
+        this.$store.commit('to', {
+            target: this.rects[idx2],
+            vars: {x: this.idxToX.get(idx1)},
+            postion: stepNum});
 
-        let t = this.rects[idx1]
+        let tmp = this.rects[idx1]
         this.$set(this.rects, idx1, this.rects[idx2])
-        this.$set(this.rects, idx2, t)
+        this.$set(this.rects, idx2, tmp)
       })
     },
     highlightArr (newArr) {
-      this.tl = gsap.timeline();
+      this.$store.commit('setTimeline', gsap.timeline());
 
-      newArr.forEach((highlightObj, i, arr) => {
-        if (i === arr.length - 1) {
-          this.tl.eventCallback('onComplete', (highlightObj) => {
-            this.tl.to(this.rects[highlightObj.mid], {fill: '#b29e40'})
-          }, [highlightObj]);
-        }
-
+      newArr.forEach((highlightObj, i) => {
         let stepNum = "step" + i;
-        this.tl.addLabel(stepNum);
+        this.$store.commit('addLabel', stepNum);
         for (let j = highlightObj.start; j <= highlightObj.end; j++) {
           const color = (j == highlightObj.mid ? '#b29e40' : '#2c397a');
-          this.tl.to(this.rects[j], {keyframes: [
+          this.$store.commit('to', {
+            target: this.rects[j],
+            vars: {keyframes: [
             {fill: color, delay: .25 },
-            {fill: this.$options.barColor, delay: .5}
-          ]}, stepNum)
+            {fill: this.$options.barColor, delay: .5} ]},
+            position: stepNum})
         }
       })
     }
@@ -122,19 +115,6 @@ export default {
         .range([this.svgHeight, 0]);
 
       return {x, y}
-    }
-  },
-  directives: {
-    // Create the axises
-    axis(el, binding) {
-      const axis = binding.arg;
-      const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
-      const methodArg = binding.value[axis];
-
-      d3.select(el).call(d3[axisMethod](methodArg)
-        .tickSizeInner(0)
-        .tickSizeOuter(0)
-        .tickPadding(10))
     }
   },
   methods: {
@@ -168,9 +148,6 @@ export default {
 }
 #barChart {
   width: 75%;
-  height: 75%;
-}
-text {
-  font-size: !important 3em;
+  height: 85%;
 }
 </style>

@@ -10,6 +10,9 @@
         </v-btn>
       </v-col>
       <v-col>
+        <TimelineControlButtons/>
+      </v-col>
+      <v-col>
         <v-text-field
           v-model="searchVal"
           placeholder="Search Value"
@@ -17,7 +20,6 @@
           solo>
         </v-text-field>
       </v-col>
-      <v-spacer></v-spacer>
       <v-spacer></v-spacer>
     </v-row>
     <BarChartVisualization
@@ -30,11 +32,13 @@
 <script>
 import BarChartVisualization from '@/components/BarChartVisualization.vue';
 import listGenerator from '@/mixins/listGenerator.js';
+import TimelineControlButtons from '@/components/TimelineControlButtons.vue';
 
 export default {
   name: 'BinarySearch',
   components: {
-    BarChartVisualization
+    BarChartVisualization,
+    TimelineControlButtons
   },
   mixins: [listGenerator],
   data () {

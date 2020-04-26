@@ -54,11 +54,4 @@ export default {
 </script>
 
 <style>
-@keyframes darkenSteelBlue {
-  50% {fill: #2c397a; }
-}
-
-@keyframes highlightBrown {
-  50% {fill: #b29e40; }
-}
 </style>
