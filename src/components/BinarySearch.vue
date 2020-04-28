@@ -2,21 +2,24 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-btn @click="refreshList(true)">New Data</v-btn>
+        <v-btn @click="refreshData()">New Data</v-btn>
         <v-btn
           @click="barChartAnimationData = binarySearch(list, searchVal, 0, listSize - 1)"
-          :disabled="!isValidSearchVal">
+          :disabled="!isValidSearchVal"
+          v-show="barChartAnimationData.length === 0"
+          >
           Search
         </v-btn>
       </v-col>
       <v-col>
-        <TimelineControlButtons/>
+        <TimelineControlButtons v-show="barChartAnimationData.length !== 0"/>
       </v-col>
       <v-col>
         <v-text-field
           v-model="searchVal"
           placeholder="Search Value"
           :rules="[rules.searchVal]"
+          :disabled="barChartAnimationData.length !== 0"
           solo>
         </v-text-field>
       </v-col>
@@ -74,9 +77,13 @@ export default {
         }
       }
     },
+    refreshData () {
+      this.refreshList(true);
+      this.barChartAnimationData = [];
+    }
   },
   mounted:function () {
-    this.refreshList(true);
+    this.refreshData();
   }
 }
 </script>

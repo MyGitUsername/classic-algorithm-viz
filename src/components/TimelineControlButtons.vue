@@ -18,7 +18,7 @@
 <script>
 /*
  * The svg icons used in this componenet were provided by font-awesome
- * under the Creative * Commons license (https://fontawesome.com/license).
+ * under the Creative Commons license (https://fontawesome.com/license).
  * No changes have been made to the original svg.
  */
 
@@ -28,6 +28,11 @@ export default {
   data () {
     return {
       //
+    }
+  },
+  computed: {
+    tl () {
+      return this.$store.state.timeline;
     }
   },
   props: {

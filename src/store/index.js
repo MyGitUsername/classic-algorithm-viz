@@ -23,7 +23,7 @@ export default new Vuex.Store({
     }, 
     pause (state) {
       let tl = state.timeline;
-      tl.tweenTo(tl.nextLabel())
+      if (!tl.paused()) tl.tweenTo(tl.nextLabel())
     },
     stepForward (state) {
       let tl = state.timeline;

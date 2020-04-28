@@ -2,11 +2,15 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-btn @click="refreshList()">New Data</v-btn>
-        <v-btn @click="swapPairs = bubbleSort(list)">Sort</v-btn>
+        <v-btn @click="refreshData()">New Data</v-btn>
+        <v-btn @click="swapPairs = bubbleSort(list)"
+            v-show="swapPairs.length === 0"
+          >
+          Sort
+          </v-btn>
       </v-col>
       <v-col>
-        <TimelineControlButtons/>
+        <TimelineControlButtons v-show="swapPairs.length !== 0"/>
       </v-col>
     </v-row>
     <BarChartVisualization
@@ -51,10 +55,14 @@ export default {
         }
       }
       return steps;
+    },
+    refreshData () {
+      this.refreshList();
+      this.swapPairs = [];
     }
   },
   mounted () {
-    this.refreshList();
+    this.refreshData();
   }
 }
 </script>

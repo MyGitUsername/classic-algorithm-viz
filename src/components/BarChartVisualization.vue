@@ -56,7 +56,7 @@ export default {
       this.initializeRects();
     },
     swapPairs (newVal) {
-      const duration = .25
+      const duration = .5;
       //Map rect idx to x coordinate
       this.rects.forEach((d,i) => this.idxToX.set(i, this.rects[i].x))
       this.$store.commit('setTimeline', gsap.timeline({defaults: {duration: duration}}));
@@ -82,19 +82,26 @@ export default {
       })
     },
     highlightArr (newArr) {
-      this.$store.commit('setTimeline', gsap.timeline());
+      const duration = 1;
+      this.$store.commit('setTimeline', gsap.timeline({defaults: {duration: duration}}));
 
-      newArr.forEach((highlightObj, i) => {
-        let stepNum = "step" + i;
+      newArr.forEach((highlightObj, i, arr) => {
+        let stepNum = "step" + (i - .5);
+        let next = "stepNum" + i;
         this.$store.commit('addLabel', stepNum);
         for (let j = highlightObj.start; j <= highlightObj.end; j++) {
           const color = (j == highlightObj.mid ? '#b29e40' : '#2c397a');
           this.$store.commit('to', {
             target: this.rects[j],
-            vars: {keyframes: [
-            {fill: color, delay: .25 },
-            {fill: this.$options.barColor, delay: .5} ]},
+            vars: {fill: color},
             position: stepNum})
+
+        if (arr.length - 1 !== i) {
+          this.$store.commit('to', {
+            target: this.rects[j],
+            vars: {fill: this.$options.barColor},
+            position: next})
+          }
         }
       })
     }

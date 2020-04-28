@@ -1,6 +1,6 @@
 const listGenerator = {
   maxValue: 100,
-  maxListSize: 25,
+  maxListSize: 15,
   minListSize: 3,
   data () {
     return {
