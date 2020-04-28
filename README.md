@@ -6,3 +6,5 @@ npm install
 
 ### Compile and View
 npm run serve
+
+![Bubble Sort Demo](demo/bubble-sort.gif)
