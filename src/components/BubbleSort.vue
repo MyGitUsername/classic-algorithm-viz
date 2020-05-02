@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row >
+  <v-container class="d-flex flex-column justify-start">
+    <v-row class="flex-shrink-1 flex-grow-0">
       <v-col cols="4">
         <v-btn @click="refreshData()">New Data</v-btn>
       </v-col>
@@ -13,8 +13,8 @@
         <TimelineControlButtons v-show="swapPairs.length !== 0"/>
       </v-col>
     </v-row>
-    <v-row style="height: 100%;" >
-      <v-col class="d-flex">
+    <v-row class="flex-grow-1">
+    <v-col class="d-flex">
       <BarChartVisualization
         :list="list"
         :swapPairs="swapPairs"

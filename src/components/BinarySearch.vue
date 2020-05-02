@@ -1,8 +1,10 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container class="d-flex flex-column justify-start">
+    <v-row class="flex-shrink-1 flex-grow-0">
       <v-col>
         <v-btn @click="refreshData()">New Data</v-btn>
+      </v-col>
+      <v-col>
         <v-btn
           @click="barChartAnimationData = binarySearch(list, searchVal, 0, listSize - 1)"
           :disabled="!isValidSearchVal"
@@ -10,8 +12,6 @@
           >
           Search
         </v-btn>
-      </v-col>
-      <v-col>
         <TimelineControlButtons v-show="barChartAnimationData.length !== 0"/>
       </v-col>
       <v-col>
@@ -23,12 +23,15 @@
           solo>
         </v-text-field>
       </v-col>
-      <v-spacer></v-spacer>
     </v-row>
-    <BarChartVisualization
-      :list='list'
-      :highlightArr='barChartAnimationData'
-      />
+    <v-row class="flex-grow-1">
+    <v-col class="d-flex">
+      <BarChartVisualization
+        :list='list'
+        :highlightArr='barChartAnimationData'
+        />
+    </v-col>
+    </v-row>
   </v-container>
 </template>
 

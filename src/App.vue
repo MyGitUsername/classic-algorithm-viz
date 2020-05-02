@@ -4,20 +4,16 @@
       app
       color="#ffdb58"
       >
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-toolbar-title v-on="on">{{ selected }}</v-toolbar-title>
-        </template>
-        <v-list>
-          <v-list-item
+
+      <v-tabs>
+        <v-tab
             v-for="(item, index) in content"
             :key="index"
             @click="selected=item.title"
-            >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+          >
+         {{ item.title }}
+         </v-tab>
+        </v-tabs>
     </v-app-bar>
 
     <v-content>
@@ -42,10 +38,10 @@ export default {
     selected: "BubbleSort",
     content: [
       {
-        title: 'BinarySearch'
+        title: 'BubbleSort'
       },
       {
-        title: 'BubbleSort'
+        title: 'BinarySearch'
       }
     ],
   }),

@@ -1,5 +1,5 @@
 <template>
-    <svg class="flex-grow-1" ref="svg" v-resize="onResize" id="barChart">
+    <svg class="flex-grow-1 flex-shrink-0" ref="svg" v-resize="onResize" id="barChart">
       <g v-for="rect in rects"
          :key="rect.id">
       <rect
@@ -28,8 +28,6 @@ import gsap from 'gsap';
 
 export default {
   name: 'BarChartVisualization',
-  swapTransitionDelay: 200,
-  highlightDelay: 500,
   margins: { left: 20, right: 20, top: 20, bottom: 20 },
   barColor: 'rgba(64, 84, 178, 1)',
   props: {
@@ -143,15 +141,12 @@ export default {
       })
     },
      onResize () {
-       console.log('onResize')
       this.windowSize = { x: this.$refs.svg.clientWidth, y: this.$refs.svg.clientHeight }
     }
   },
   mounted () {
-    console.log('mounted ' + this.windowSize.x + ' ' + window.innerWidth)
     this.initializeRects();
-    //this.onResize();
-    this.$nextTick(() =>  this.onResize() )
+    this.$nextTick(() =>  this.onResize())
 
   }
 }
