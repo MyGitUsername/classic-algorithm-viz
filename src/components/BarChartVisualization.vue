@@ -1,6 +1,5 @@
 <template>
-  <v-container>
-    <svg id="barChart">
+    <svg class="flex-grow-1" ref="svg" v-resize="onResize" id="barChart">
       <g v-for="rect in rects"
          :key="rect.id">
       <rect
@@ -21,7 +20,6 @@
       </text>
       </g>
     </svg>
-  </v-container>
 </template>
 
 <script>
@@ -45,8 +43,10 @@ export default {
   data () {
     return {
       // TODO: Resize svg width and height based on window size
-      svgWidth: 800,
-      svgHeight: 600,
+     windowSize: {
+          x: window.innerWidth,
+          y: window.innerHeight
+        },
       rects: [],
       idxToX: new Map()
     }
@@ -108,18 +108,18 @@ export default {
   },
   computed: {
     graphWidth () {
-      return this.svgWidth - this.$options.margins.left - this.$options.margins.right;
+      return this.windowSize.x - this.$options.margins.left - this.$options.margins.right;
     },
     graphHeight () {
-      return this.svgHeight - this.$options.margins.top - this.$options.margins.bottom;
+      return this.windowSize.y - this.$options.margins.top - this.$options.margins.bottom;
     },
     scale () {
       const x = d3.scaleBand()
-        .range([0, this.svgWidth])
+        .range([0, this.graphWidth])
         .padding(0.1);
 
       const y = d3.scaleLinear()
-        .range([this.svgHeight, 0]);
+        .range([this.graphHeight, 0]);
 
       return {x, y}
     }
@@ -133,7 +133,7 @@ export default {
         return {
           id: "bar-" + i,
           width: this.scale.x.bandwidth(),
-          height:  this.svgHeight - this.scale.y(d),
+          height:  this.graphHeight - this.scale.y(d),
           x: this.scale.x(i),
           y: this.scale.y(d),
           fill: 'rgba(64, 84, 178, 1)',
@@ -141,20 +141,20 @@ export default {
           d: d
         }
       })
+    },
+     onResize () {
+       console.log('onResize')
+      this.windowSize = { x: this.$refs.svg.clientWidth, y: this.$refs.svg.clientHeight }
     }
   },
   mounted () {
+    console.log('mounted ' + this.windowSize.x + ' ' + window.innerWidth)
     this.initializeRects();
+    //this.onResize();
+    this.$nextTick(() =>  this.onResize() )
+
   }
 }
 </script>
 <style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-}
-#barChart {
-  width: 75%;
-  height: 85%;
-}
 </style>

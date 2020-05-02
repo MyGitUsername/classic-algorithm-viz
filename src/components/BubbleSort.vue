@@ -1,22 +1,26 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
+    <v-row >
+      <v-col cols="4">
         <v-btn @click="refreshData()">New Data</v-btn>
-        <v-btn @click="swapPairs = bubbleSort(list)"
-            v-show="swapPairs.length === 0"
-          >
-          Sort
-          </v-btn>
       </v-col>
-      <v-col>
+      <v-col cols="8">
+        <v-btn @click="swapPairs = bubbleSort(list)"
+             v-show="swapPairs.length === 0"
+             >
+             Sort
+        </v-btn>
         <TimelineControlButtons v-show="swapPairs.length !== 0"/>
       </v-col>
     </v-row>
-    <BarChartVisualization
-      :list="list"
-      :swapPairs="swapPairs"
-      />
+    <v-row style="height: 100%;" >
+      <v-col class="d-flex">
+      <BarChartVisualization
+        :list="list"
+        :swapPairs="swapPairs"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -68,7 +72,7 @@ export default {
 </script>
 <style scoped>
 .container {
-  width: 100%;
   height: 100%;
-}
+  width: 100%;
+  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-btn-toggle>
     <v-btn @click="$store.commit('stepBackward')">
       <img src="@/assets/step-backward-solid.svg" height=20 width=20>
     </v-btn>
@@ -12,7 +12,7 @@
     <v-btn @click="$store.commit('stepForward')">
       <img src="@/assets/step-forward-solid.svg" height=20 width=20>
     </v-btn>
-  </v-row>
+  </v-btn-toggle>
 </template>
 
 <script>

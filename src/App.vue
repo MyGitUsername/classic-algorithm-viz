@@ -33,7 +33,6 @@ import BubbleSort from './components/BubbleSort';
 
 export default {
   name: 'App',
-
   components: {
     BinarySearch,
     BubbleSort
@@ -52,6 +51,5 @@ export default {
   }),
 };
 </script>
-
 <style>
 </style>
