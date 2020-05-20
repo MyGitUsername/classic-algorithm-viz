@@ -17,8 +17,9 @@
     </v-app-bar>
 
     <v-content>
-      <BinarySearch v-if="selected === 'BinarySearch'"/>
-      <BubbleSort v-if="selected === 'BubbleSort'"/>
+      <BinarySearch v-if="selected === 'Binary Search'"/>
+      <BubbleSort v-if="selected === 'Bubble Sort'"/>
+      <SelectionSort v-if="selected === 'Selection Sort'"/>
     </v-content>
   </v-app>
 </template>
@@ -26,22 +27,27 @@
 <script>
 import BinarySearch from './components/BinarySearch';
 import BubbleSort from './components/BubbleSort';
+import SelectionSort from './components/SelectionSort';
 
 export default {
   name: 'App',
   components: {
     BinarySearch,
-    BubbleSort
+    BubbleSort,
+    SelectionSort
   },
 
   data: () => ({
-    selected: "BubbleSort",
+    selected: 'Bubble Sort',
     content: [
       {
-        title: 'BubbleSort'
+        title: 'Bubble Sort'
       },
       {
-        title: 'BinarySearch'
+        title: 'Binary Search'
+      },
+      {
+        title: 'Selection Sort'
       }
     ],
   }),
